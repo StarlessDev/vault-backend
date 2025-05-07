@@ -118,6 +118,6 @@ run/
 !gradle-wrapper.jar
 
 # Instance configuration & files
-configurations/
+configuration/
 keys/
 uploads/
