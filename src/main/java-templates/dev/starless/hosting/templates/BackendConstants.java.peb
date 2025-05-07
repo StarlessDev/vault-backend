@@ -1,0 +1,5 @@
+package dev.starless.hosting.templates;
+
+public class BackendConstants {
+    public static final String VERSION = "{# @pebvariable name="version" type="String" #}{{ version }}";
+}

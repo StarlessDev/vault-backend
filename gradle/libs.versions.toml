@@ -1,0 +1,61 @@
+metadata.format.version = "1.1"
+
+[versions]
+
+javalin = "6.6.0"
+caffeine = "3.2.0"
+gson = "2.11.0"
+
+hikari = "6.2.1"
+mariadb-driver = "3.5.1"
+security = "6.4.5"
+jwt = "4.5.0"
+
+hibernate = "6.6.13.Final"
+hibernateval = "8.0.0.Final"
+
+configurate = "4.2.0-SNAPSHOT"
+sem4j = "3.1.0"
+logback = "1.5.13"
+
+# Gradle Plugins
+shadow = "8.3.3"
+lombok = "8.11"
+blossom = "2.1.0"
+ideaext = "1.1.10"
+
+[libraries]
+
+# Web framework
+javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin"}
+# Caches
+caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine"}
+# Json
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson"}
+
+# MariaDB
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
+mariadb = { group = "org.mariadb.jdbc", name = "mariadb-java-client", version.ref = "mariadb-driver" }
+security = { group = "org.springframework.security", name = "spring-security-core", version.ref = "security"}
+jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt"}
+
+hibernate = { group = "org.hibernate", name = "hibernate-core", version.ref = "hibernate"}
+hibernatehikari = { group = "org.hibernate", name = "hibernate-hikaricp", version.ref = "hibernate"}
+hibernatevalidator = { group = "org.hibernate.validator", name = "hibernate-validator", version.ref = "hibernateval"}
+hibernatejpamodelgen = { group = "org.hibernate.orm", name = "hibernate-jpamodelgen", version.ref = "hibernate" }
+
+# Config
+configurate = { group = "org.spongepowered", name = "configurate-yaml", version.ref = "configurate"}
+sem4j = { group = "com.vdurmont", name = "semver4j", version.ref = "sem4j"}
+
+# Logging
+logback = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback"}
+
+[plugins]
+
+# Shading and utils
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
+# Templating plugins
+blossom = { id = "net.kyori.blossom", version.ref = "blossom" }
+ideaext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "ideaext" }
