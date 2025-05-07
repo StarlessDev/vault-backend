@@ -16,11 +16,6 @@ public enum ConfigEntry {
 
     API_PORT("webserver.port", 8181),
     ALLOWED_DOMAINS("webserver.allowed_domains", Collections.emptyList()),
-    JWT_SECRET("webserver.jwt_secret", ""),
-
-    OAUTH_CLIENT_ID("webserver.oauth.client_id", "oauth-client-id"),
-    OAUTH_CLIENT_SECRET("webserver.oauth.client_secret", "oauth-client-secret"),
-    OAUTH_REDIRECT_URI("webserver.oauth.redirect_uri", "https://example.com"),
 
     FILES_MOUNT_POINT("uploads.mount_point", "./uploads");
 
