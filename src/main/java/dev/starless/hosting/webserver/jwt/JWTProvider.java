@@ -87,6 +87,10 @@ public class JWTProvider {
             return null;
         }
 
+        if (!algorithm.getName().equals(decodedJWT.getAlgorithm())) {
+            return null;
+        }
+
         return JsonParser.parseString(new String(
                 Base64.getDecoder().decode(decodedJWT.getPayload()),
                 StandardCharsets.UTF_8
