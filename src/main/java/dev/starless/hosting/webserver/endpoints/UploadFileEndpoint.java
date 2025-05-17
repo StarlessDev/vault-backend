@@ -31,24 +31,22 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         }
 
         final List<UploadedFile> files = ctx.uploadedFiles();
-        ctx.future(() -> CompletableFuture.runAsync(() -> {
-            final List<UserUpload> uploads = new ArrayList<>();
-            for (UploadedFile file : files) {
-                this.server.getLogger().info("working with {}", file.filename());
-                try {
-                    final UserUpload upload = this.server.getFilesManager().encryptAndSave(info, file);
-                    uploads.add(upload);
-                } catch (IOException e) {
-                    this.server.getLogger().error("Error uploading file: {}", file.filename(), e);
-                }
+        final List<UserUpload> uploads = new ArrayList<>();
+        for (UploadedFile file : files) {
+            this.server.getLogger().info("working with {}", file.filename());
+            try {
+                final UserUpload upload = this.server.getFilesManager().encryptAndSave(info, file);
+                uploads.add(upload);
+            } catch (IOException e) {
+                this.server.getLogger().error("Error uploading file: {}", file.filename(), e);
             }
+        }
 
-            // Update database
-            this.addUploadsToDatabase(uploads);
+        // Update database
+        this.addUploadsToDatabase(uploads);
 
-            // Send response
-            ctx.json(this.buildResponse(uploads));
-        }));
+        // Send response
+        ctx.json(this.buildResponse(uploads));
     }
 
     private void addUploadsToDatabase(final List<UserUpload> uploads) {
@@ -68,6 +66,7 @@ public class UploadFileEndpoint extends WebServerEndpoint {
             );
 
             final JsonObject uploadPayload = new JsonObject();
+            uploadPayload.addProperty("fileName", upload.fileName());
             uploadPayload.addProperty("fileId", upload.fileId());
             uploadPayload.addProperty("fullKey", fullKey);
             array.add(uploadPayload);

@@ -30,39 +30,37 @@ public class DownloadFileEndpoint extends WebServerEndpoint {
         }
 
         final String fileId = ctx.pathParam("fileId");
-        ctx.future(() -> CompletableFuture.runAsync(() -> {
-            final UserUpload upload;
-            try (final Session session = server.getHibernate().getSessionFactory().openSession()) {
-                final Transaction trx = session.beginTransaction();
-                // Get object reference
-                upload = session.find(UserUpload.class, fileId);
-                if (upload == null) {
-                    ctx.status(HttpStatus.NOT_FOUND);
-                    return;
-                }
-
-                // Update last download information
-                upload.onDownload();
-                // Merge data
-                session.merge(upload);
-                // Commit changes to database
-                trx.commit();
-            }
-
-            final byte[] bytes;
-            try {
-                // Read bytes from disk
-                bytes = server.getFilesManager().download(fileId);
-            } catch (IOException e) {
-                ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        final UserUpload upload;
+        try (final Session session = server.getHibernate().getSessionFactory().openSession()) {
+            final Transaction trx = session.beginTransaction();
+            // Get object reference
+            upload = session.find(UserUpload.class, fileId);
+            if (upload == null) {
+                ctx.status(HttpStatus.NOT_FOUND);
                 return;
             }
 
-            // Send file to client
-            ctx.contentType(ContentType.OCTET_STREAM)
-                    .header("Content-Disposition", "attachment; filename=\"" + upload.fileName() + "\"")
-                    .header("Content-Length", String.valueOf(bytes.length))
-                    .result(bytes);
-        }));
+            // Update last download information
+            upload.onDownload();
+            // Merge data
+            session.merge(upload);
+            // Commit changes to database
+            trx.commit();
+        }
+
+        final byte[] bytes;
+        try {
+            // Read bytes from disk
+            bytes = server.getFilesManager().download(fileId);
+        } catch (IOException e) {
+            ctx.status(HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        // Send file to client
+        ctx.contentType(ContentType.OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=\"" + upload.fileName() + "\"")
+                .header("Content-Length", String.valueOf(bytes.length))
+                .result(bytes);
     }
 }

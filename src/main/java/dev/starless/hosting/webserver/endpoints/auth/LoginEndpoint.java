@@ -64,7 +64,7 @@ public class LoginEndpoint extends WebServerEndpoint {
                         token,
                         "/",
                         Math.toIntExact(expiresAfter.toSeconds()),
-                        true
+                        false
                 );
                 cookie.setHttpOnly(true);
 

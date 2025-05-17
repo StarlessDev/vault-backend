@@ -18,7 +18,9 @@ import java.util.Set;
 public class AuthMiddleware extends WebServerEndpoint {
 
     private final Set<String> protectedEndpoints = Set.of(
-            "/api/account"
+            "/api/account",
+            "/api/upload",
+            "/api/download"
     );
 
     public AuthMiddleware(@NotNull WebServer server) {

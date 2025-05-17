@@ -27,26 +27,24 @@ public class DeleteFileEndpoint extends WebServerEndpoint {
         }
 
         final String fileId = ctx.pathParam("fileId");
-        ctx.future(() -> CompletableFuture.runAsync(() -> {
-            // Delete from database
-            final AtomicBoolean notFound = new AtomicBoolean(false);
-            server.getHibernate().getSessionFactory().inTransaction(session -> {
-                final UserUpload upload = session.find(UserUpload.class, fileId);
-                if (upload == null) {
-                    notFound.set(true);
-                    return;
-                }
-                session.remove(upload);
-            });
-
-            if (notFound.get()) {
-                ctx.status(HttpStatus.NOT_FOUND);
-            } else {
-                // Delete file from disk
-                server.getFilesManager().delete(fileId);
-                // Send OK
-                ctx.status(HttpStatus.OK);
+        // Delete from database
+        final AtomicBoolean notFound = new AtomicBoolean(false);
+        server.getHibernate().getSessionFactory().inTransaction(session -> {
+            final UserUpload upload = session.find(UserUpload.class, fileId);
+            if (upload == null) {
+                notFound.set(true);
+                return;
             }
-        }));
+            session.remove(upload);
+        });
+
+        if (notFound.get()) {
+            ctx.status(HttpStatus.NOT_FOUND);
+        } else {
+            // Delete file from disk
+            server.getFilesManager().delete(fileId);
+            // Send OK
+            ctx.status(HttpStatus.OK);
+        }
     }
 }
