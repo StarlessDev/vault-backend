@@ -5,7 +5,6 @@ import dev.starless.hosting.config.ConfigEntry;
 import dev.starless.hosting.objects.EncryptedFile;
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.session.UserInfo;
-import dev.starless.hosting.utils.RandomUtils;
 import io.javalin.http.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +46,10 @@ public class FilesManager {
             bytes = is.readAllBytes();
         }
 
-        upload.key(RandomUtils.randomString(16));
         try {
-            final EncryptedFile encrypted = encryptionEngine.encrypt(bytes, upload.key());
-            upload.salt(encrypted.salt());
-            upload.iv(encrypted.iv());
+            final EncryptedFile encrypted = encryptionEngine.encrypt(bytes);
+            upload.key(encrypted.key());
+            upload.ivAndSalt(encrypted.ivAndSalt());
 
             Files.write(basePath.resolve(upload.fileId()), encrypted.content());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException |
@@ -63,10 +61,19 @@ public class FilesManager {
         return upload;
     }
 
-    public byte[] download(final String fileId) throws IOException {
+    public byte[] download(final String fileId, final String key)
+            throws IOException,
+            InvalidAlgorithmParameterException,
+            NoSuchPaddingException,
+            IllegalBlockSizeException,
+            NoSuchAlgorithmException,
+            InvalidKeySpecException,
+            BadPaddingException,
+            InvalidKeyException {
         final File file = basePath.resolve(fileId).toFile();
         if (file.exists()) {
-            return Files.readAllBytes(file.toPath());
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            return encryptionEngine.decrypt(bytes, key);
         } else {
             return null;
         }

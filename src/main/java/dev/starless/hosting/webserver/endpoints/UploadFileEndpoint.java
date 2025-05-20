@@ -13,9 +13,10 @@ import io.javalin.http.UploadedFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class UploadFileEndpoint extends WebServerEndpoint {
 
@@ -58,17 +59,11 @@ public class UploadFileEndpoint extends WebServerEndpoint {
     private JsonArray buildResponse(final List<UserUpload> uploads) {
         final JsonArray array = new JsonArray();
         uploads.forEach(upload -> {
-            final String fullKey = String.format("%s#%s-%s-%s",
-                    upload.fileId(),
-                    upload.key(),
-                    upload.salt(),
-                    upload.iv()
-            );
-
+            final String fullKey = upload.key() + upload.ivAndSalt();
             final JsonObject uploadPayload = new JsonObject();
             uploadPayload.addProperty("fileName", upload.fileName());
             uploadPayload.addProperty("fileId", upload.fileId());
-            uploadPayload.addProperty("fullKey", fullKey);
+            uploadPayload.addProperty("fullKey", URLEncoder.encode(fullKey, StandardCharsets.UTF_8));
             array.add(uploadPayload);
         });
         return array;

@@ -37,7 +37,7 @@ public class UserUpload {
     @Column(nullable = false)
     private Instant lastDownload;
 
-    private transient String key, salt, iv;
+    private transient String key, ivAndSalt;
 
     public UserUpload(int uploaderId, String fileName) {
         this.fileId = RandomUtils.randomString(8);

@@ -1,25 +1,30 @@
 package dev.starless.hosting.webserver.endpoints;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import dev.starless.hosting.objects.UserUpload;
-import dev.starless.hosting.objects.UserUpload_;
 import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
 import io.javalin.http.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jetbrains.annotations.NotNull;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class DownloadFileEndpoint extends WebServerEndpoint {
 
     public DownloadFileEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.GET, "/api/download/{fileId}");
+        super(server, HandlerType.POST, "/api/download/{fileId}");
     }
 
     @Override
@@ -27,6 +32,14 @@ public class DownloadFileEndpoint extends WebServerEndpoint {
         final UserInfo user = ctx.sessionAttribute(SESSION_OBJECT_NAME);
         if (user == null) {
             throw new UnauthorizedResponse();
+        }
+
+        final String key;
+        try {
+            final JsonObject obj = JsonParser.parseString(ctx.body()).getAsJsonObject();
+            key = obj.get("key").getAsString();
+        } catch (JsonSyntaxException | UnsupportedOperationException | IllegalStateException ex) {
+            throw new BadRequestResponse();
         }
 
         final String fileId = ctx.pathParam("fileId");
@@ -51,12 +64,16 @@ public class DownloadFileEndpoint extends WebServerEndpoint {
         final byte[] bytes;
         try {
             // Read bytes from disk
-            bytes = server.getFilesManager().download(fileId);
+            bytes = server.getFilesManager().download(fileId, key);
         } catch (IOException e) {
             ctx.status(HttpStatus.NOT_FOUND);
             return;
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException
+                 | InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
+            throw new InternalServerErrorResponse("Could not decrypt file!");
         }
-
         // Send file to client
         ctx.contentType(ContentType.OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\"" + upload.fileName() + "\"")
