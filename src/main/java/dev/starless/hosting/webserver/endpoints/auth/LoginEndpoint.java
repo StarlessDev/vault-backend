@@ -68,8 +68,9 @@ public class LoginEndpoint extends WebServerEndpoint {
                 );
                 cookie.setHttpOnly(true);
 
-                ctx.cookie(cookie);
-                ctx.status(HttpStatus.OK);
+                ctx.cookie(cookie)
+                        .status(HttpStatus.OK)
+                        .json(info);
             } else {
                 ctx.status(HttpStatus.UNAUTHORIZED);
             }
