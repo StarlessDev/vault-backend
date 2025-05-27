@@ -26,7 +26,7 @@ public class AccountEndpoint extends WebServerEndpoint {
 
     @Override
     public void handle(@NotNull Context ctx) {
-        final UserInfo info = ctx.sessionAttribute(SESSION_OBJECT_NAME);
+        final UserInfo info = ctx.attribute(SESSION_OBJECT_NAME);
         if (info == null) {
             throw new UnauthorizedResponse();
         }

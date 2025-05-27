@@ -14,6 +14,7 @@ import dev.starless.hosting.webserver.endpoints.DeleteFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.DownloadFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.UploadFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.LoginEndpoint;
+import dev.starless.hosting.webserver.endpoints.auth.LogoutEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.RegisterEndpoint;
 import dev.starless.hosting.webserver.jwt.JWTProvider;
 import dev.starless.hosting.webserver.middleware.AuthMiddleware;
@@ -86,6 +87,7 @@ public class WebServer {
         // Auth endpoints and middleware
         this.endpoints.add(new LoginEndpoint(this));
         this.endpoints.add(new RegisterEndpoint(this));
+        this.endpoints.add(new LogoutEndpoint(this));
         this.endpoints.add(new AuthMiddleware(this));
 
         // App endpoints

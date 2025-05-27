@@ -18,6 +18,7 @@ import java.util.Set;
 public class AuthMiddleware extends WebServerEndpoint {
 
     private final Set<String> protectedEndpoints = Set.of(
+            "/api/auth/logout",
             "/api/account",
             "/api/upload",
             "/api/download"
@@ -54,11 +55,10 @@ public class AuthMiddleware extends WebServerEndpoint {
         final UserInfo info;
         try {
             info = this.server.getGson().fromJson(payload.getAsJsonObject("data"), UserInfo.class);
-            ctx.sessionAttribute(SESSION_OBJECT_NAME, info);
+            ctx.attribute(SESSION_OBJECT_NAME, info);
         } catch (JsonSyntaxException ex) {
             ctx.removeCookie(SESSION_COOKIE_NAME);
             throw new BadRequestResponse();
         }
-
     }
 }

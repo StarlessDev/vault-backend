@@ -21,7 +21,7 @@ public class DeleteFileEndpoint extends WebServerEndpoint {
 
     @Override
     public void handle(@NotNull Context ctx) {
-        final UserInfo user = ctx.sessionAttribute(SESSION_OBJECT_NAME);
+        final UserInfo user = ctx.attribute(SESSION_OBJECT_NAME);
         if (user == null) {
             throw new UnauthorizedResponse();
         }
