@@ -61,7 +61,7 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         uploads.forEach(upload -> {
             final String fullKey = upload.key() + upload.ivAndSalt();
             final JsonObject uploadPayload = new JsonObject();
-            uploadPayload.addProperty("name", upload.fileName());
+            uploadPayload.addProperty("username", upload.fileName());
             uploadPayload.addProperty("id", upload.fileId());
             uploadPayload.addProperty("fullKey", URLEncoder.encode(fullKey, StandardCharsets.UTF_8));
             array.add(uploadPayload);

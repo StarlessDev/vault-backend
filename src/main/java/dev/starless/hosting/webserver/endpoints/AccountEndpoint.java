@@ -46,7 +46,7 @@ public class AccountEndpoint extends WebServerEndpoint {
 
             JsonObject payload = new JsonObject();
             payload.addProperty("id", info.id());
-            payload.addProperty("name", info.name());
+            payload.addProperty("username", info.username());
             payload.add("uploads", server.getGson().toJsonTree(files));
 
             ctx.json(payload);
