@@ -17,7 +17,8 @@ public enum ConfigEntry {
     API_PORT("webserver.port", 8181),
     ALLOWED_DOMAINS("webserver.allowed_domains", Collections.emptyList()),
 
-    FILES_MOUNT_POINT("uploads.mount_point", "./uploads");
+    FILES_MOUNT_POINT("uploads.mount_point", "./uploads"),
+    PFP_MOUNT_POINT("pfp.mount_point", "./pfps"),;
 
     private final String path;
     private final Object defaultValue;

@@ -33,7 +33,7 @@ public class FilesManager {
         final File baseFile = new File(config.getString(ConfigEntry.FILES_MOUNT_POINT));
         this.encryptionEngine = new EncryptionEngine();
         if (!baseFile.isDirectory()) {
-            logger.error("Invalid mount directory: {}", baseFile.getAbsolutePath());
+            logger.error("Invalid files mount directory: {}", baseFile.getAbsolutePath());
             System.exit(1);
         }
         this.basePath = baseFile.toPath();

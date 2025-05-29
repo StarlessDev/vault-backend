@@ -5,6 +5,7 @@ metadata.format.version = "1.1"
 javalin = "6.6.0"
 caffeine = "3.2.0"
 gson = "2.11.0"
+tika = "2.9.4"
 
 hikari = "6.2.1"
 mariadb-driver = "3.5.1"
@@ -32,6 +33,8 @@ javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin"}
 caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine"}
 # Json
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson"}
+# Tika (file type detection)
+tika = { group = "org.apache.tika", name = "tika-core", version.ref = "tika"}
 
 # MariaDB
 hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }

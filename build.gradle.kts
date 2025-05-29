@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.javalin) // Webserver
     implementation(libs.caffeine) // Cache
     implementation(libs.gson) // Gson
+    implementation(libs.tika)
 
     // MariaDB
     implementation(libs.hikari)

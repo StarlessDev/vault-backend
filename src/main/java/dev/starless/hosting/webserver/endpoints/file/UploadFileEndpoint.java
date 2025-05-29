@@ -1,4 +1,4 @@
-package dev.starless.hosting.webserver.endpoints;
+package dev.starless.hosting.webserver.endpoints.file;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

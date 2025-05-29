@@ -1,4 +1,4 @@
-package dev.starless.hosting.webserver.endpoints;
+package dev.starless.hosting.webserver.endpoints.account;
 
 import com.google.gson.JsonObject;
 import dev.starless.hosting.objects.session.UserInfo;

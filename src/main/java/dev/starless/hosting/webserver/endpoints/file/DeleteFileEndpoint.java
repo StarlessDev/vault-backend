@@ -1,4 +1,4 @@
-package dev.starless.hosting.webserver.endpoints;
+package dev.starless.hosting.webserver.endpoints.file;
 
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.session.UserInfo;
@@ -10,7 +10,6 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.UnauthorizedResponse;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DeleteFileEndpoint extends WebServerEndpoint {

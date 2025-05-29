@@ -3,16 +3,20 @@ package dev.starless.hosting.webserver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.starless.hosting.FilesManager;
+import dev.starless.hosting.ProfilePictureManager;
 import dev.starless.hosting.config.Config;
 import dev.starless.hosting.config.ConfigEntry;
 import dev.starless.hosting.database.HibernateSessionProvider;
 import dev.starless.hosting.gson.InstantAdapter;
 import dev.starless.hosting.gson.ResponseAdapter;
 import dev.starless.hosting.gson.ThrowableAdapter;
-import dev.starless.hosting.webserver.endpoints.AccountEndpoint;
-import dev.starless.hosting.webserver.endpoints.DeleteFileEndpoint;
-import dev.starless.hosting.webserver.endpoints.DownloadFileEndpoint;
-import dev.starless.hosting.webserver.endpoints.UploadFileEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.AccountEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.DeleteProfilePictureEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.ProfilePictureEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.UpdateProfilePictureEndpoint;
+import dev.starless.hosting.webserver.endpoints.file.DeleteFileEndpoint;
+import dev.starless.hosting.webserver.endpoints.file.DownloadFileEndpoint;
+import dev.starless.hosting.webserver.endpoints.file.UploadFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.LoginEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.LogoutEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.RegisterEndpoint;
@@ -22,6 +26,7 @@ import io.javalin.Javalin;
 import io.javalin.json.JavalinGson;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +45,8 @@ public class WebServer {
 
     private final HibernateSessionProvider hibernate;
     private final FilesManager filesManager;
+    private final ProfilePictureManager pfpManager;
+    private final Tika tika = new Tika();
 
     private final Logger logger;
     private final Gson gson;
@@ -57,6 +64,7 @@ public class WebServer {
 
         this.hibernate = hibernate;
         this.filesManager = new FilesManager(configuration);
+        this.pfpManager = new ProfilePictureManager(configuration);
 
         this.endpoints = new HashSet<>();
         this.server = Javalin.create(config -> {
@@ -90,8 +98,12 @@ public class WebServer {
         this.endpoints.add(new LogoutEndpoint(this));
         this.endpoints.add(new AuthMiddleware(this));
 
-        // App endpoints
+        // Account endpoints
         this.endpoints.add(new AccountEndpoint(this));
+        this.endpoints.add(new ProfilePictureEndpoint(this));
+        this.endpoints.add(new UpdateProfilePictureEndpoint(this));
+        this.endpoints.add(new DeleteProfilePictureEndpoint(this));
+        // Files endpoints
         this.endpoints.add(new UploadFileEndpoint(this));
         this.endpoints.add(new DownloadFileEndpoint(this));
         this.endpoints.add(new DeleteFileEndpoint(this));
