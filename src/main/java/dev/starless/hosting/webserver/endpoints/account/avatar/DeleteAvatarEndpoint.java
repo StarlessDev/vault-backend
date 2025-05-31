@@ -1,4 +1,4 @@
-package dev.starless.hosting.webserver.endpoints.account;
+package dev.starless.hosting.webserver.endpoints.account.avatar;
 
 import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.WebServer;
@@ -9,9 +9,9 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.UnauthorizedResponse;
 import org.jetbrains.annotations.NotNull;
 
-public class DeleteProfilePictureEndpoint extends WebServerEndpoint {
+public class DeleteAvatarEndpoint extends WebServerEndpoint {
 
-    public DeleteProfilePictureEndpoint(@NotNull WebServer server) {
+    public DeleteAvatarEndpoint(@NotNull WebServer server) {
         super(server, HandlerType.DELETE, "/api/account/pfp");
     }
 

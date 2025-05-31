@@ -1,19 +1,18 @@
-package dev.starless.hosting.webserver.endpoints.account;
+package dev.starless.hosting.webserver.endpoints.account.avatar;
 
 import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.Response;
 import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
 import io.javalin.http.*;
-import org.apache.tika.Tika;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class UpdateProfilePictureEndpoint extends WebServerEndpoint {
+public class UpdateAvatarEndpoint extends WebServerEndpoint {
 
-    public UpdateProfilePictureEndpoint(@NotNull WebServer server) {
+    public UpdateAvatarEndpoint(@NotNull WebServer server) {
         super(server, HandlerType.POST, "/api/account/pfp");
     }
 

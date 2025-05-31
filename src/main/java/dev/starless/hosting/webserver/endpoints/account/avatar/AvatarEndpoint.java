@@ -1,4 +1,4 @@
-package dev.starless.hosting.webserver.endpoints.account;
+package dev.starless.hosting.webserver.endpoints.account.avatar;
 
 import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.WebServer;
@@ -6,9 +6,9 @@ import dev.starless.hosting.webserver.WebServerEndpoint;
 import io.javalin.http.*;
 import org.jetbrains.annotations.NotNull;
 
-public class ProfilePictureEndpoint extends WebServerEndpoint {
+public class AvatarEndpoint extends WebServerEndpoint {
 
-    public ProfilePictureEndpoint(@NotNull WebServer server) {
+    public AvatarEndpoint(@NotNull WebServer server) {
         super(server, HandlerType.GET, "/api/account/pfp");
     }
 

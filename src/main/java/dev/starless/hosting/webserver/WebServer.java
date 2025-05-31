@@ -10,10 +10,13 @@ import dev.starless.hosting.database.HibernateSessionProvider;
 import dev.starless.hosting.gson.InstantAdapter;
 import dev.starless.hosting.gson.ResponseAdapter;
 import dev.starless.hosting.gson.ThrowableAdapter;
+import dev.starless.hosting.objects.Token;
+import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.endpoints.account.AccountEndpoint;
-import dev.starless.hosting.webserver.endpoints.account.DeleteProfilePictureEndpoint;
-import dev.starless.hosting.webserver.endpoints.account.ProfilePictureEndpoint;
-import dev.starless.hosting.webserver.endpoints.account.UpdateProfilePictureEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.UpdateNameEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.avatar.DeleteAvatarEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.avatar.AvatarEndpoint;
+import dev.starless.hosting.webserver.endpoints.account.avatar.UpdateAvatarEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.DeleteFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.DownloadFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.UploadFileEndpoint;
@@ -23,6 +26,9 @@ import dev.starless.hosting.webserver.endpoints.auth.RegisterEndpoint;
 import dev.starless.hosting.webserver.jwt.JWTProvider;
 import dev.starless.hosting.webserver.middleware.AuthMiddleware;
 import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.http.Cookie;
+import io.javalin.http.HttpStatus;
 import io.javalin.json.JavalinGson;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,6 +36,7 @@ import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -100,9 +107,10 @@ public class WebServer {
 
         // Account endpoints
         this.endpoints.add(new AccountEndpoint(this));
-        this.endpoints.add(new ProfilePictureEndpoint(this));
-        this.endpoints.add(new UpdateProfilePictureEndpoint(this));
-        this.endpoints.add(new DeleteProfilePictureEndpoint(this));
+        this.endpoints.add(new UpdateNameEndpoint(this));
+        this.endpoints.add(new AvatarEndpoint(this));
+        this.endpoints.add(new UpdateAvatarEndpoint(this));
+        this.endpoints.add(new DeleteAvatarEndpoint(this));
         // Files endpoints
         this.endpoints.add(new UploadFileEndpoint(this));
         this.endpoints.add(new DownloadFileEndpoint(this));
@@ -114,5 +122,28 @@ public class WebServer {
 
     public void stop() {
         this.server.stop();
+    }
+
+    public Token getAuthToken(final UserInfo info) {
+        final Duration expiresAfter = Duration.ofDays(7L);
+        final String token = JWTProvider.getInstance().sign(
+                this.getGson().toJsonTree(info),
+                expiresAfter
+        );
+        return new Token(token, expiresAfter);
+    }
+
+    public Context setAuthCookie(final Context ctx, final UserInfo info) {
+        final Token token = this.getAuthToken(info);
+        final Cookie cookie = new Cookie(
+                "session",
+                token.token(),
+                "/",
+                Math.toIntExact(token.expiry().toSeconds()),
+                false
+        );
+        cookie.setHttpOnly(true);
+
+        return ctx.cookie(cookie);
     }
 }
