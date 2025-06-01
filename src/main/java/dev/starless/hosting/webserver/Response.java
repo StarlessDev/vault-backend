@@ -21,8 +21,8 @@ public class Response {
 
     public static Response badRequest(@Nullable final String message) {
         return new Response()
-                .statusCode(HttpStatus.BAD_REQUEST)
-                .error(message);
+                .error(message)
+                .statusCode(HttpStatus.BAD_REQUEST);
     }
 
     public static Response serverError(@Nullable final String message) {

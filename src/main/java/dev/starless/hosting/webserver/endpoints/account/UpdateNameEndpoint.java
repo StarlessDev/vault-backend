@@ -3,6 +3,7 @@ package dev.starless.hosting.webserver.endpoints.account;
 import dev.starless.hosting.objects.ServiceUser;
 import dev.starless.hosting.objects.bodies.UpdateUsernameBody;
 import dev.starless.hosting.objects.session.UserInfo;
+import dev.starless.hosting.webserver.Response;
 import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
 import dev.starless.hosting.webserver.jwt.JWTProvider;
@@ -12,6 +13,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.query.Query;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateNameEndpoint extends WebServerEndpoint {
 
@@ -30,6 +33,7 @@ public class UpdateNameEndpoint extends WebServerEndpoint {
                 .check(obj -> obj.username() != null, "INVALID_BODY")
                 .get();
 
+        final AtomicBoolean updated = new AtomicBoolean(false);
         server.getHibernate().getSessionFactory().inTransaction(session -> {
             final ServiceUser user = session.get(ServiceUser.class, info.id());
             if (user == null) {
@@ -45,14 +49,18 @@ public class UpdateNameEndpoint extends WebServerEndpoint {
             query.setParameter("id", info.id());
 
             if (query.getSingleResult() > 0) {
-                throw new BadRequestResponse("Username already exists");
+                return;
             }
 
             user.setUsername(body.username());
             session.merge(user);
+            updated.set(true);
         });
 
-        this.server.setAuthCookie(ctx, new UserInfo(info.id(), body.username()))
-                .status(HttpStatus.OK);
+        if (updated.get()) {
+            this.server.setAuthCookie(ctx, new UserInfo(info.id(), body.username()));
+        } else {
+            this.sendResponse(ctx, Response.badRequest("This username is already in use"));
+        }
     }
 }

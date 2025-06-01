@@ -13,7 +13,7 @@ import java.io.InputStream;
 public class UpdateAvatarEndpoint extends WebServerEndpoint {
 
     public UpdateAvatarEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/account/pfp");
+        super(server, HandlerType.POST, "/api/account/avatar");
     }
 
     @Override
