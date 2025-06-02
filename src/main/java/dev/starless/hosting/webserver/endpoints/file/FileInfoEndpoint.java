@@ -8,6 +8,7 @@ import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
+import io.javalin.http.HttpStatus;
 import io.javalin.http.UnauthorizedResponse;
 import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,11 @@ public class FileInfoEndpoint extends WebServerEndpoint {
         final UserUpload upload;
         try (final Session session = server.getHibernate().getSessionFactory().openSession()) {
             upload = session.find(UserUpload.class, fileId);
+        }
+
+        if (upload == null) {
+            ctx.status(HttpStatus.NOT_FOUND);
+            return;
         }
 
         final JsonObject obj = new JsonObject();
