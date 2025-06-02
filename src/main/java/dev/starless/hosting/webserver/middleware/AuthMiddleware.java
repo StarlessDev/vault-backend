@@ -21,7 +21,6 @@ public class AuthMiddleware extends WebServerEndpoint {
             "/api/auth/logout",
             "/api/account",
             "/api/upload",
-            "/api/download",
             "/api/delete/"
     );
 

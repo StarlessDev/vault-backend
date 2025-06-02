@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
@@ -30,6 +31,9 @@ public class UserUpload {
     private String fileName;
     @Column(nullable = false)
     private Instant uploadDate;
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private long size;
 
     @Column(nullable = false)
     private long totalDownloads;

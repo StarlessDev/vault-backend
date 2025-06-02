@@ -29,11 +29,6 @@ public class DownloadFileEndpoint extends WebServerEndpoint {
 
     @Override
     public void handle(@NotNull Context ctx) {
-        final UserInfo user = ctx.attribute(SESSION_OBJECT_NAME);
-        if (user == null) {
-            throw new UnauthorizedResponse();
-        }
-
         final String key;
         try {
             final JsonObject obj = JsonParser.parseString(ctx.body()).getAsJsonObject();

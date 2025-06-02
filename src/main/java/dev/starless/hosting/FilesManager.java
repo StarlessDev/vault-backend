@@ -50,6 +50,7 @@ public class FilesManager {
             final EncryptedFile encrypted = encryptionEngine.encrypt(bytes);
             upload.key(encrypted.key());
             upload.ivAndSalt(encrypted.ivAndSalt());
+            upload.size(file.size());
 
             Files.write(basePath.resolve(upload.fileId()), encrypted.content());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException |

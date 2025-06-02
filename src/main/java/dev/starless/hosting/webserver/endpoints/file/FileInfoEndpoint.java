@@ -30,6 +30,7 @@ public class FileInfoEndpoint extends WebServerEndpoint {
         obj.addProperty("fileId", upload.fileId());
         obj.addProperty("fileName", upload.fileName());
         obj.addProperty("uploadDate", upload.uploadDate().toEpochMilli());
+        obj.addProperty("size", upload.size());
 
         final UserInfo user = ctx.attribute(SESSION_OBJECT_NAME);
         if (user != null && user.id() == upload.uploaderId()) {
