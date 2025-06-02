@@ -19,6 +19,7 @@ import dev.starless.hosting.webserver.endpoints.account.avatar.AvatarEndpoint;
 import dev.starless.hosting.webserver.endpoints.account.avatar.UpdateAvatarEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.DeleteFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.DownloadFileEndpoint;
+import dev.starless.hosting.webserver.endpoints.file.FileInfoEndpoint;
 import dev.starless.hosting.webserver.endpoints.file.UploadFileEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.LoginEndpoint;
 import dev.starless.hosting.webserver.endpoints.auth.LogoutEndpoint;
@@ -111,6 +112,7 @@ public class WebServer {
         this.endpoints.add(new UpdateAvatarEndpoint(this));
         this.endpoints.add(new DeleteAvatarEndpoint(this));
         // Files endpoints
+        this.endpoints.add(new FileInfoEndpoint(this));
         this.endpoints.add(new UploadFileEndpoint(this));
         this.endpoints.add(new DownloadFileEndpoint(this));
         this.endpoints.add(new DeleteFileEndpoint(this));

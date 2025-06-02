@@ -17,6 +17,11 @@ public class DeleteAvatarEndpoint extends WebServerEndpoint {
 
     @Override
     public void handle(@NotNull Context ctx) throws Exception {
+        if (ctx.method().equals(HandlerType.OPTIONS)) {
+            ctx.status(HttpStatus.OK);
+            return;
+        }
+
         final UserInfo info = ctx.attribute(SESSION_OBJECT_NAME);
         if (info == null) {
             throw new UnauthorizedResponse();
