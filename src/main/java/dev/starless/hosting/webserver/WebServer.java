@@ -12,6 +12,7 @@ import dev.starless.hosting.gson.ResponseAdapter;
 import dev.starless.hosting.gson.ThrowableAdapter;
 import dev.starless.hosting.objects.Token;
 import dev.starless.hosting.objects.session.UserInfo;
+import dev.starless.hosting.webserver.endpoints.StatsEndpoint;
 import dev.starless.hosting.webserver.endpoints.account.AccountEndpoint;
 import dev.starless.hosting.webserver.endpoints.account.UpdateNameEndpoint;
 import dev.starless.hosting.webserver.endpoints.account.avatar.DeleteAvatarEndpoint;
@@ -116,6 +117,7 @@ public class WebServer {
         this.endpoints.add(new UploadFileEndpoint(this));
         this.endpoints.add(new DownloadFileEndpoint(this));
         this.endpoints.add(new DeleteFileEndpoint(this));
+        this.endpoints.add(new StatsEndpoint(this));
 
         this.endpoints.stream()
                 .flatMap(endpoint -> endpoint.buildEndpoint().stream())
