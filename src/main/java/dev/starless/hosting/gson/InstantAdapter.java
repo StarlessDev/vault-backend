@@ -18,6 +18,6 @@ public class InstantAdapter implements JsonSerializer<Instant>, JsonDeserializer
     public JsonElement serialize(Instant src,
                                  Type typeOfSrc,
                                  JsonSerializationContext context) {
-        return new JsonPrimitive(src.getEpochSecond());
+        return new JsonPrimitive(src.toEpochMilli());
     }
 }
