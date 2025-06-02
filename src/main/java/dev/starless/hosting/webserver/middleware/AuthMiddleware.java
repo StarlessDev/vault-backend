@@ -22,15 +22,19 @@ public class AuthMiddleware extends WebServerEndpoint {
             "/api/account",
             "/api/upload",
             "/api/download",
-            "/api/delete"
+            "/api/delete/"
     );
 
     public AuthMiddleware(@NotNull WebServer server) {
-        super(server, HandlerType.BEFORE, "*");
+        super(server, "*", HandlerType.BEFORE);
     }
 
     @Override
     public void handle(@NotNull Context ctx) {
+        if (ctx.method().equals(HandlerType.OPTIONS)) {
+            return;
+        }
+
         final String path = ctx.path().toLowerCase();
         final boolean notProtected = this.protectedEndpoints
                 .stream()

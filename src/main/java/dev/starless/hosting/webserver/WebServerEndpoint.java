@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class WebServerEndpoint implements Handler {
 
@@ -17,16 +19,17 @@ public abstract class WebServerEndpoint implements Handler {
 
     protected WebServer server;
 
-    private final HandlerType method;
+    private final HandlerType[] methods;
     private final String path;
 
     public WebServerEndpoint(@NotNull final WebServer server,
-                             @NotNull final HandlerType method,
-                             @NotNull final String path) {
+                             @NotNull final String path,
+                             @NotNull final HandlerType... methods) {
         this.server = server;
-        this.method = method;
+        this.methods = methods;
         this.path = path;
     }
+
 
     protected Logger getLogger() {
         return server.getLogger();
@@ -45,7 +48,11 @@ public abstract class WebServerEndpoint implements Handler {
         );
     }
 
-    public Endpoint buildEndpoint() {
-        return new Endpoint(method, path, Collections.emptySet(), this);
+    public List<Endpoint> buildEndpoint() {
+        return Stream.of(methods)
+                .map(method -> {
+                    return new Endpoint(method, path, Collections.emptySet(), this);
+                })
+                .toList();
     }
 }

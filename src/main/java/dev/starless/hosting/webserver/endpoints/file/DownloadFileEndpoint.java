@@ -24,7 +24,7 @@ import java.security.spec.InvalidKeySpecException;
 public class DownloadFileEndpoint extends WebServerEndpoint {
 
     public DownloadFileEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/download/{fileId}");
+        super(server, "/api/download/{fileId}", HandlerType.POST);
     }
 
     @Override

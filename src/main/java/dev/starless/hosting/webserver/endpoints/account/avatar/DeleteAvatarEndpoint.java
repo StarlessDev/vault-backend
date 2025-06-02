@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class DeleteAvatarEndpoint extends WebServerEndpoint {
 
     public DeleteAvatarEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.DELETE, "/api/account/avatar");
+        super(server, "/api/account/avatar", HandlerType.DELETE);
     }
 
     @Override

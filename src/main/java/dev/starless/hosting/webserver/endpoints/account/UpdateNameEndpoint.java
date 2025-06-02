@@ -6,11 +6,7 @@ import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.Response;
 import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
-import dev.starless.hosting.webserver.jwt.JWTProvider;
 import io.javalin.http.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import org.hibernate.query.Query;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UpdateNameEndpoint extends WebServerEndpoint {
 
     public UpdateNameEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/account/username");
+        super(server, "/api/account/username", HandlerType.POST);
     }
 
     @Override

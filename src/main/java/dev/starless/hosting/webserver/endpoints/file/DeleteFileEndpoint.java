@@ -15,11 +15,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DeleteFileEndpoint extends WebServerEndpoint {
 
     public DeleteFileEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.DELETE, "/api/delete/{fileId}");
+        super(server, "/api/delete/{fileId}", HandlerType.DELETE, HandlerType.OPTIONS);
     }
 
     @Override
     public void handle(@NotNull Context ctx) {
+        if (ctx.method().equals(HandlerType.OPTIONS)) {
+            ctx.status(HttpStatus.OK);
+            return;
+        }
+
         final UserInfo user = ctx.attribute(SESSION_OBJECT_NAME);
         if (user == null) {
             throw new UnauthorizedResponse();

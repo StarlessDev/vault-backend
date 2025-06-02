@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class RegisterEndpoint extends WebServerEndpoint {
 
     public RegisterEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/auth/register");
+        super(server, "/api/auth/register", HandlerType.POST);
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public class LoginEndpoint extends WebServerEndpoint {
 
     public LoginEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/auth/login");
+        super(server, "/api/auth/login", HandlerType.POST);
     }
 
     @Override

@@ -28,7 +28,6 @@ import dev.starless.hosting.webserver.middleware.AuthMiddleware;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.Cookie;
-import io.javalin.http.HttpStatus;
 import io.javalin.json.JavalinGson;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -116,7 +115,10 @@ public class WebServer {
         this.endpoints.add(new DownloadFileEndpoint(this));
         this.endpoints.add(new DeleteFileEndpoint(this));
 
-        this.endpoints.forEach(endpoint -> server.addEndpoint(endpoint.buildEndpoint()));
+        this.endpoints.stream()
+                .flatMap(endpoint -> endpoint.buildEndpoint().stream())
+                .forEach(server::addEndpoint);
+
         this.server.start(config.getInt(ConfigEntry.API_PORT));
     }
 

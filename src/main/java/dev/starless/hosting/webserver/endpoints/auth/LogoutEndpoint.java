@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class LogoutEndpoint extends WebServerEndpoint {
 
     public LogoutEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/auth/logout");
+        super(server, "/api/auth/logout", HandlerType.POST);
     }
 
     @Override

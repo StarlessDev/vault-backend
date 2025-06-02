@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class AvatarEndpoint extends WebServerEndpoint {
 
     public AvatarEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.GET, "/api/account/avatar");
+        super(server, "/api/account/avatar", HandlerType.GET);
     }
 
     @Override

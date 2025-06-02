@@ -21,7 +21,7 @@ import java.util.List;
 public class UploadFileEndpoint extends WebServerEndpoint {
 
     public UploadFileEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.POST, "/api/upload");
+        super(server, "/api/upload", HandlerType.POST);
     }
 
     @Override

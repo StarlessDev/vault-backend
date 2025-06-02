@@ -2,7 +2,6 @@ package dev.starless.hosting.webserver.endpoints.account;
 
 import com.google.gson.JsonObject;
 import dev.starless.hosting.objects.ServiceUser;
-import dev.starless.hosting.objects.ServiceUser_;
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.UserUpload_;
 import dev.starless.hosting.objects.session.UserInfo;
@@ -24,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 public class AccountEndpoint extends WebServerEndpoint {
 
     public AccountEndpoint(@NotNull WebServer server) {
-        super(server, HandlerType.GET, "/api/account");
+        super(server, "/api/account", HandlerType.GET);
     }
 
     @Override
