@@ -2,6 +2,7 @@ package dev.starless.hosting.webserver.endpoints.file;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.starless.hosting.config.ConfigEntry;
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.WebServer;
@@ -32,13 +33,20 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         }
 
         final List<UploadedFile> files = ctx.uploadedFiles();
+        final List<FailedUpload> failedUploads = new ArrayList<>();
         final List<UserUpload> uploads = new ArrayList<>();
         for (UploadedFile file : files) {
+            if (file.size() >= server.getConfig().getInt(ConfigEntry.FILES_MAX_SIZE)) {
+                failedUploads.add(new FailedUpload(file.filename(), "The file is too big"));
+                continue;
+            }
+
             this.server.getLogger().info("working with {}", file.filename());
             try {
                 final UserUpload upload = this.server.getFilesManager().encryptAndSave(info, file);
                 uploads.add(upload);
             } catch (IOException e) {
+                failedUploads.add(new FailedUpload(file.filename(), e.getMessage()));
                 this.server.getLogger().error("Error uploading file: {}", file.filename(), e);
             }
         }
@@ -47,7 +55,14 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         this.addUploadsToDatabase(uploads);
 
         // Send response
-        ctx.json(this.buildResponse(uploads));
+        final JsonArray array = this.buildResponse(uploads);
+        failedUploads.forEach(failedUpload -> {
+            final JsonObject obj = new JsonObject();
+            obj.addProperty("filename", failedUpload.filename);
+            obj.addProperty("error", failedUpload.error);
+            array.add(obj);
+        });
+        ctx.json(array);
     }
 
     private void addUploadsToDatabase(final List<UserUpload> uploads) {
@@ -67,5 +82,8 @@ public class UploadFileEndpoint extends WebServerEndpoint {
             array.add(uploadPayload);
         });
         return array;
+    }
+
+    record FailedUpload(String filename, String error) {
     }
 }

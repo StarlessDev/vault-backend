@@ -18,6 +18,7 @@ public enum ConfigEntry {
     ALLOWED_DOMAINS("webserver.allowed_domains", Collections.emptyList()),
 
     FILES_MOUNT_POINT("uploads.mount_point", "./uploads"),
+    FILES_MAX_SIZE("uploads.max_size", 5E7),
     PFP_MOUNT_POINT("pfp.mount_point", "./pfps"),;
 
     private final String path;
