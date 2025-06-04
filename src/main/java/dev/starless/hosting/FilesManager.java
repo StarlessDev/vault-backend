@@ -2,7 +2,7 @@ package dev.starless.hosting;
 
 import dev.starless.hosting.config.Config;
 import dev.starless.hosting.config.ConfigEntry;
-import dev.starless.hosting.objects.EncryptedFile;
+import dev.starless.hosting.objects.EncryptionDetails;
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.session.UserInfo;
 import io.javalin.http.UploadedFile;
@@ -13,6 +13,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -41,18 +42,13 @@ public class FilesManager {
 
     public UserUpload encryptAndSave(final UserInfo info, final UploadedFile file) throws IOException {
         final UserUpload upload = new UserUpload(info.id(), file.filename());
-        final byte[] bytes;
-        try (final InputStream is = file.content()) {
-            bytes = is.readAllBytes();
-        }
+        upload.size(file.size());
 
-        try {
-            final EncryptedFile encrypted = encryptionEngine.encrypt(bytes);
+        try (final InputStream is = file.content();
+             final FileOutputStream fos = new FileOutputStream(basePath.resolve(upload.fileId()).toFile())) {
+            final EncryptionDetails encrypted = encryptionEngine.encrypt(is, fos);
             upload.key(encrypted.key());
             upload.ivAndSalt(encrypted.ivAndSalt());
-            upload.size(file.size());
-
-            Files.write(basePath.resolve(upload.fileId()), encrypted.content());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException |
                  InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException |
                  BadPaddingException e) {

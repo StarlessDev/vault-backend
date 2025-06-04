@@ -1,12 +1,15 @@
 package dev.starless.hosting;
 
-import dev.starless.hosting.objects.EncryptedFile;
+import dev.starless.hosting.objects.EncryptionDetails;
 import dev.starless.hosting.utils.RandomUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -26,14 +29,15 @@ public class EncryptionEngine {
     private static final int PBKDF2_ITERATIONS = 65536; // Increase for more security
     private static final int SALT_LENGTH_BYTES = 16;
 
-    public EncryptedFile encrypt(final byte[] bytes)
+    public EncryptionDetails encrypt(final InputStream is, final OutputStream os)
             throws NoSuchAlgorithmException,
             InvalidKeySpecException,
             NoSuchPaddingException,
             InvalidAlgorithmParameterException,
             InvalidKeyException,
             IllegalBlockSizeException,
-            BadPaddingException {
+            BadPaddingException,
+            IOException {
         final SecureRandom random = new SecureRandom();
         final HexFormat hexFormat = HexFormat.of();
 
@@ -56,13 +60,16 @@ public class EncryptionEngine {
         Cipher cipher = Cipher.getInstance(MODE);
         GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmParameterSpec);
-        final byte[] ciphertext = cipher.doFinal(bytes);
 
-        return new EncryptedFile(
-                ciphertext,
-                pwd,
-                hexFormat.formatHex(iv) + hexFormat.formatHex(salt)
-        );
+        try (final CipherOutputStream cos = new CipherOutputStream(os, cipher)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                cos.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return new EncryptionDetails(pwd, hexFormat.formatHex(iv) + hexFormat.formatHex(salt));
     }
 
     public byte[] decrypt(final byte[] ciphertext, final String key) throws NoSuchAlgorithmException,

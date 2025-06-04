@@ -46,6 +46,8 @@ public class ProfilePictureManager {
 
     public boolean saveImage(final UploadedFile file, final UserInfo userInfo) {
         try (final InputStream is = file.content()) {
+            // Apparently passing an InputStream to copy is
+            // more efficient than getting the bytes and using them.
             Files.copy(is, this.getImagePath(userInfo), StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (IOException e) {
