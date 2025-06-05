@@ -44,7 +44,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("dev.starless.hosting.Main")
+    mainClass.set("dev.starless.hosting.entrypoint.Main")
 }
 
 // Blossom configuration
