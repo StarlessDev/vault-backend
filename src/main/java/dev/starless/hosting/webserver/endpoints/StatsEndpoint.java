@@ -59,8 +59,8 @@ public class StatsEndpoint extends WebServerEndpoint {
                 userUploadsNumber = 0;
                 userUploadsSize = 0;
             } else {
-                userUploadsNumber = tuple.get(0, Long.class);
-                userUploadsSize = tuple.get(1, Long.class);
+                userUploadsNumber = this.getLongOrZero(tuple, 0);
+                userUploadsSize = this.getLongOrZero(tuple, 1);
             }
         }
 
@@ -70,5 +70,14 @@ public class StatsEndpoint extends WebServerEndpoint {
         obj.addProperty("userUploadsNumber", userUploadsNumber);
         obj.addProperty("userUploadsSize", userUploadsSize);
         ctx.json(obj);
+    }
+
+    private long getLongOrZero(final Tuple tuple, final int index) {
+        try {
+            Long value = tuple.get(index, Long.class);
+            return Objects.requireNonNullElse(value, 0L);
+        } catch (IllegalArgumentException ex) {
+            return 0L;
+        }
     }
 }
