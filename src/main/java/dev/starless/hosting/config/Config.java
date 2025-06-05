@@ -49,11 +49,9 @@ public class Config {
                 } else {
                     logger.error("Could not create the config file");
                 }
-                return false;
             } catch (IOException e) {
                 logger.error("An error occurred while creating the config directory: {}", e.getMessage());
             }
-            return false;
         }
 
         loader = this.loaderFromFile(configFile);
