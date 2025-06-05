@@ -22,8 +22,9 @@ import java.util.Map;
 public class Config {
 
     private final Logger logger = LoggerFactory.getLogger("Config");
-    
-    @Getter private boolean initialized = false;
+
+    @Getter
+    private boolean initialized = false;
 
     private YamlConfigurationLoader loader;
     private CommentedConfigurationNode root;
@@ -44,13 +45,15 @@ public class Config {
             // Se non esiste, cerchiamo di crearla
             try {
                 if (configFile.createNewFile()) {
-                    logger.info("The config has been created. Stop the bot to edit it.");
+                    logger.info("The config has been created. Stop the progam to edit it.");
                 } else {
                     logger.error("Could not create the config file");
                 }
+                return false;
             } catch (IOException e) {
                 logger.error("An error occurred while creating the config directory: {}", e.getMessage());
             }
+            return false;
         }
 
         loader = this.loaderFromFile(configFile);
@@ -181,7 +184,7 @@ public class Config {
         }
         return Collections.emptyList();
     }
-    
+
     private YamlConfigurationLoader loaderFromFile(File langFile) {
         return YamlConfigurationLoader.builder()
                 .nodeStyle(NodeStyle.BLOCK)
