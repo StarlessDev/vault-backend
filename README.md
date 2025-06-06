@@ -1,5 +1,5 @@
 # Vault-Backend
-This is the backend of the Vault project: a small and simple encrypted file hosting. Written for the Web Technologies exam @ UniMoRe in Java using (Javalin)[https://javalin.io] and Hibernate.
+This is the backend of the Vault project: a small and simple encrypted file hosting. Written for the Web Technologies exam @ UniMoRe in Java using [Javalin](https://javalin.io) and Hibernate.
 
 ## Configuration
 Running the project will generate a .yml configuration file to edit.
