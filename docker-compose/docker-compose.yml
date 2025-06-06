@@ -1,0 +1,41 @@
+services:
+  vault:
+    image: vault-backend:1.0.0
+    ports: 
+      - "8181:8181"
+    volumes:
+      - "./config:/app/configuration"
+      - "vault-uploads:/app/uploads"
+      - "vault-avatars:/app/pfps"
+    networks:
+      - vault-nw
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    links: 
+      - mariadb
+  
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password 
+    volumes:
+      - "./mariadb-init:/docker-entrypoint-initdb.d"
+    ports:
+      - 3306
+    networks:
+      - vault-nw
+    healthcheck:
+        test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+        start_period: 1m
+        start_interval: 5s
+        interval: 1m
+        timeout: 5s
+        retries: 3
+
+volumes:
+  vault-uploads:
+  vault-avatars:
+
+networks:
+  vault-nw: {}
