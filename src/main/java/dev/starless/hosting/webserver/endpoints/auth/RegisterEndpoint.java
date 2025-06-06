@@ -66,7 +66,9 @@ public class RegisterEndpoint extends WebServerEndpoint {
                 session.persist(serviceUser);
             });
 
-            ctx.status(HttpStatus.CREATED).json(serviceUser.toUserInfo());
+            this.server.setAuthCookie(ctx, serviceUser.toUserInfo())
+                    .status(HttpStatus.CREATED)
+                    .json(serviceUser.toUserInfo());
         }));
     }
 }
