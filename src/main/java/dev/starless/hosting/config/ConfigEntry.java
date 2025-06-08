@@ -14,6 +14,7 @@ public enum ConfigEntry {
     DATABASE_USER("mariadb.user", "root"),
     DATABASE_PASSWORD("mariadb.password", "password"),
 
+    API_HOST("webserver.host", "localhost"),
     API_PORT("webserver.port", 8181),
     ALLOWED_DOMAINS("webserver.allowed_domains", Collections.emptyList()),
 

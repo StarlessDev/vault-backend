@@ -123,7 +123,10 @@ public class WebServer {
                 .flatMap(endpoint -> endpoint.buildEndpoint().stream())
                 .forEach(server::addEndpoint);
 
-        this.server.start(config.getInt(ConfigEntry.API_PORT));
+        this.server.start(
+                config.getString(ConfigEntry.API_HOST),
+                config.getInt(ConfigEntry.API_PORT)
+        );
     }
 
     public void stop() {
