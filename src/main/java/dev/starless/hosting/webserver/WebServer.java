@@ -30,6 +30,7 @@ import dev.starless.hosting.webserver.middleware.AuthMiddleware;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.Cookie;
+import io.javalin.http.SameSite;
 import io.javalin.json.JavalinGson;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -152,6 +153,8 @@ public class WebServer {
                 false
         );
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setSameSite(SameSite.NONE);
 
         return ctx.cookie(cookie);
     }
