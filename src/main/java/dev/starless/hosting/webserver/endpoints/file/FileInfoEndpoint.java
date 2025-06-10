@@ -32,19 +32,8 @@ public class FileInfoEndpoint extends WebServerEndpoint {
             return;
         }
 
-        final JsonObject obj = new JsonObject();
-        obj.addProperty("fileId", upload.fileId());
-        obj.addProperty("fileName", upload.fileName());
-        obj.addProperty("uploadDate", upload.uploadDate().toEpochMilli());
-        obj.addProperty("size", upload.size());
-
         final UserInfo user = ctx.attribute(SESSION_OBJECT_NAME);
-        if (user != null && user.id() == upload.uploaderId()) {
-            obj.addProperty("totalDownloads", upload.totalDownloads());
-            obj.addProperty("uploaderId",  upload.uploaderId());
-            obj.addProperty("lastDownload", upload.lastDownload().toEpochMilli());
-        }
-
+        final JsonObject obj = upload.toJson(user);
         ctx.json(obj);
     }
 }

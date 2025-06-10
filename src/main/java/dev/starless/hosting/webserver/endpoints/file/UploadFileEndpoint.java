@@ -55,7 +55,7 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         this.addUploadsToDatabase(uploads);
 
         // Send response
-        final JsonArray array = this.buildResponse(uploads);
+        final JsonArray array = this.buildResponse(info, uploads);
         failedUploads.forEach(failedUpload -> {
             final JsonObject obj = new JsonObject();
             obj.addProperty("filename", failedUpload.filename);
@@ -71,13 +71,11 @@ public class UploadFileEndpoint extends WebServerEndpoint {
         });
     }
 
-    private JsonArray buildResponse(final List<UserUpload> uploads) {
+    private JsonArray buildResponse(final UserInfo info, final List<UserUpload> uploads) {
         final JsonArray array = new JsonArray();
         uploads.forEach(upload -> {
             final String fullKey = upload.key() + upload.ivAndSalt();
-            final JsonObject uploadPayload = new JsonObject();
-            uploadPayload.addProperty("username", upload.fileName());
-            uploadPayload.addProperty("id", upload.fileId());
+            final JsonObject uploadPayload = upload.toJson(info); // stats would be zero anyway
             uploadPayload.addProperty("fullKey", URLEncoder.encode(fullKey, StandardCharsets.UTF_8));
             array.add(uploadPayload);
         });
