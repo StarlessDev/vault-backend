@@ -25,7 +25,7 @@ public class EncryptionEngine {
     private static final int KEY_LENGTH = 16;
     private static final int KEY_LENGTH_BITS = 256;
     private static final int GCM_IV_LENGTH_BYTES = 12; // 96 bits
-    private static final int GCM_TAG_LENGTH_BITS = 128; // Common tag length
+    public static final int GCM_TAG_LENGTH_BITS = 128; // Common tag length
     private static final int PBKDF2_ITERATIONS = 65536; // Increase for more security
     private static final int SALT_LENGTH_BYTES = 16;
 
@@ -72,13 +72,11 @@ public class EncryptionEngine {
         return new EncryptionDetails(pwd, hexFormat.formatHex(iv) + hexFormat.formatHex(salt));
     }
 
-    public byte[] decrypt(final byte[] ciphertext, final String key) throws NoSuchAlgorithmException,
+    public CipherInputStream decrypt(final InputStream is, final String key) throws NoSuchAlgorithmException,
             InvalidKeySpecException,
             NoSuchPaddingException,
             InvalidAlgorithmParameterException,
-            InvalidKeyException,
-            IllegalBlockSizeException,
-            BadPaddingException {
+            InvalidKeyException {
         if (key.length() != KEY_LENGTH + (GCM_IV_LENGTH_BYTES + SALT_LENGTH_BYTES) * 2) return null;
         // 1. Decode Key, Salt and IV
         final String pwd = key.substring(0, KEY_LENGTH);
@@ -100,6 +98,6 @@ public class EncryptionEngine {
 
         // doFinal will decrypt and verify the GCM authentication tag simultaneously.
         // If the tag is invalid, it will throw an AEADBadTagException (a subclass of BadPaddingException).
-        return cipher.doFinal(ciphertext);
+        return new CipherInputStream(is, cipher);
     }
 }

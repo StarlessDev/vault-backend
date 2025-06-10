@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import dev.starless.hosting.objects.UserUpload;
-import dev.starless.hosting.objects.session.UserInfo;
 import dev.starless.hosting.webserver.WebServer;
 import dev.starless.hosting.webserver.WebServerEndpoint;
 import io.javalin.http.*;
@@ -56,23 +55,6 @@ public class DownloadFileEndpoint extends WebServerEndpoint {
             trx.commit();
         }
 
-        final byte[] bytes;
-        try {
-            // Read bytes from disk
-            bytes = server.getFilesManager().download(fileId, key);
-        } catch (IOException e) {
-            ctx.status(HttpStatus.NOT_FOUND);
-            return;
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException
-                 | InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
-            throw new InternalServerErrorResponse("Could not decrypt file!");
-        }
-        // Send file to client
-        ctx.contentType(ContentType.OCTET_STREAM)
-                .header("Content-Disposition", "attachment; filename=\"" + upload.fileName() + "\"")
-                .header("Content-Length", String.valueOf(bytes.length))
-                .result(bytes);
+        this.server.getFilesManager().download(ctx, upload, key);
     }
 }

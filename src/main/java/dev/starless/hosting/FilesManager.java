@@ -5,17 +5,18 @@ import dev.starless.hosting.config.ConfigEntry;
 import dev.starless.hosting.objects.EncryptionDetails;
 import dev.starless.hosting.objects.UserUpload;
 import dev.starless.hosting.objects.session.UserInfo;
+import io.javalin.http.ContentType;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 import io.javalin.http.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.CipherInputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidAlgorithmParameterException;
@@ -58,21 +59,29 @@ public class FilesManager {
         return upload;
     }
 
-    public byte[] download(final String fileId, final String key)
-            throws IOException,
-            InvalidAlgorithmParameterException,
-            NoSuchPaddingException,
-            IllegalBlockSizeException,
-            NoSuchAlgorithmException,
-            InvalidKeySpecException,
-            BadPaddingException,
-            InvalidKeyException {
-        final File file = basePath.resolve(fileId).toFile();
-        if (file.exists()) {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            return encryptionEngine.decrypt(bytes, key);
-        } else {
-            return null;
+    public void download(final Context ctx,
+                         final UserUpload upload,
+                         final String key) {
+        final File file = basePath.resolve(upload.fileId()).toFile();
+        if (!file.exists()) {
+            ctx.status(HttpStatus.NOT_FOUND);
+            return;
+        }
+
+        try {
+            // Javalin will close the streams (hopefully...
+            // it gets very angry when I close them)
+            final CipherInputStream decryptedStream = encryptionEngine.decrypt(new FileInputStream(file), key);
+
+            long encryptedSize = file.length();
+            long decryptedSize = encryptedSize - (EncryptionEngine.GCM_TAG_LENGTH_BITS / 8);
+
+            ctx.contentType(ContentType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=\"" + upload.fileName() + "\"")
+                    .header("Content-Length", String.valueOf(decryptedSize))
+                    .result(decryptedStream);
+        } catch (Exception e) {
+            ctx.status(HttpStatus.INTERNAL_SERVER_ERROR).result("Failed to download file: " + e.getMessage());
         }
     }
 
